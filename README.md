@@ -1,3 +1,14 @@
+# 笔记步骤
+开始前 ：
+git pull
+开始后：
+git add .
+git commit -m "daily: 2026-02-06"
+git push
+
+
+
+
 # Comptage
 
 ## 思路
