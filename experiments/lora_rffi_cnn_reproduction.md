@@ -122,27 +122,6 @@ $$
 
 当该指标大于设定阈值时，认为该窗口附近可能存在 LoRa upchirp，从而得到一个粗略的 packet 起点位置。
 
-### 局部精细搜索
-
-由于粗检测阶段的滑动步长为 32 samples，因此检测到的位置并不一定与真实 preamble 起点完全对齐。为了提高截取精度，我在粗略起点附近进行局部搜索。
-
-具体来说，在 coarse start 前 1024 samples 到后 512 samples 的范围内，每隔 16 samples 尝试一个候选起点。对于每个候选起点，截取连续 4096 samples，并将其划分为 8 个 chirps。然后分别对每个 chirp 进行 dechirp 和 FFT，记录每个 chirp 的 FFT peak bin。
-
-由于 LoRa preamble 由重复的 upchirp 组成，如果候选起点对齐正确，则 8 个 chirp 的 FFT peak bin 应该保持一致。因此，我使用 8 个 chirp 的 peak bin 一致性作为评价标准。评分方式为：
-
-$$
-score = (N_{unique,8}, N_{unique,7})
-$$
-
-其中 $N_{unique,8}$ 表示 8 个 chirp 的 peak bin 中不同取值的数量，$N_{unique,7}$ 表示忽略第一个 chirp 后，后 7 个 chirp 的 peak bin 中不同取值的数量。
-
-选择 score 最小的位置作为最终 preamble 起点。这样可以尽量保证截取到的 8 个 upchirps 在时间上对齐，并提高后续 FFT 特征提取和 CNN 训练数据的稳定性。
-
-### 提取结果质量检查
-
-最后，我对所有提取出的 packet 进行质量检查。对于每个 packet，统计其 8 个 chirp 的 FFT peak bin 是否完全一致，同时也统计忽略第一个 chirp 后，后 7 个 chirp 的 peak bin 是否一致。
-
-如果大多数 packet 的 8-chirp 或 7-chirp peak bin 保持稳定，则说明 preamble 提取结果较为可靠。
 
 **核心**
 **我利用 LoRa upchirp 在 dechirp 后会变成单频信号的特性，通过 FFT peak 检测 chirp 位置；然后利用 preamble 中多个 upchirp 重复一致的特点，在粗检测位置附近搜索，使 8 个 chirp 的 FFT peak bin 尽量一致，从而得到更准确的 preamble 起点。**

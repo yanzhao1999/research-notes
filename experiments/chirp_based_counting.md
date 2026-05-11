@@ -154,7 +154,9 @@ FRMPayload = 1B 数据内容
 Fport   = 1B 因为我们有数据
 一共是1+1+1+7+4=14B
 根据公式
+
 ![equation](../images/equation.png)
+
 我们选择的sf=7，bw125khz
 CR = 1 = 4/5，是 LoRaWAN 默认最省 airtime 的纠错率
 PL=14
@@ -183,6 +185,3 @@ H = 0 IH 表示是否使用“隐式头（implicit header）”，而 LoRaWAN up
 该模型可以作为 LoRaWAN baseline，用于与 chirp-based counting 方法在不同观测时间窗口下的性能进行比较。
 
 ⸻
-
-
-
