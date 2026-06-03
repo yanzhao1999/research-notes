@@ -1,0 +1,1 @@
+![pinout](../images/lora-vs-pinout.png)
