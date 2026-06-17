@@ -1,0 +1,1 @@
+在接收过程中，is_header == #t 表示接收机检测到了一个疑似 LoRa 帧头，并在这一阶段输出 SF、CFO 等同步信息，但这并不代表该帧已经成功解码。随后程序会根据 header 解码结果中的 err 字段进行判断：如果 err ≠ 0，说明 header 无效，程序会丢弃当前帧并回到检测状态；如果 err = 0，说明 header 解码有效，程序才会继续进入 payload 解码阶段，并生成 is_header == #f 的信息，其中包含 pay_len、crc、cr、symb_numb 等 payload 相关参数。因此，在后续统计有效 LoRaWAN 帧和提取 DevAddr 时，我主要保留 is_header == #f 且 err = 0 的帧，再进一步根据 MHDR 筛选 LoRaWAN 上行帧。
